@@ -13,7 +13,7 @@ router.post(
     body("text").isString().notEmpty().withMessage("Text is required"),
     body("completed").isBoolean().withMessage("Completed must be a boolean")
   ],
-  (req, res) => {
+  (req: any, res: any) => {
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {
@@ -29,7 +29,7 @@ router.put(
     body("text").isString().notEmpty().withMessage("Text is required"),
     body("completed").isBoolean().withMessage("Completed must be a boolean")
   ],
-  (req, res) => {
+  (req: any, res: any) => {
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {
