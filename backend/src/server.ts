@@ -11,7 +11,7 @@ app.use("/api", todosRouter)
 // Global error handling Middleware
 app.use((err: any, req: any, res: any, nex: any) => {
   console.error(err.stack); // Log error for debugging
-  res.status(500).json({ mess: "Internal Server Error"});
+  res.status(500).json({ mess: "Internal Server Error" });
 });
 
 app.listen(port, () => {
