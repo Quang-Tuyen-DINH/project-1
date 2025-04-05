@@ -1,10 +1,6 @@
 import { NextFunction, Request, Response } from "express";
-import jwt from "jsonwebtoken";
+import jwt, { JwtPayload } from "jsonwebtoken";
 import bcrypt from "bcryptjs";
-
-interface AuthRequest extends Request {
-  user?: jwt.JwtPayload | string;
-}
 
 // Secret key for JWT (should be in .env in a real app)
 const SECRET_KEY = "1stSecretKey_!";
@@ -16,7 +12,7 @@ export const generateToken = (userId: string, role: string): string => {
 
 // Middleware to verify JWT and attach user information to the request
 export const verifyToken = (
-  req: AuthRequest,
+  req: Request,
   res: Response,
   next: NextFunction
 ): void | Response => {
@@ -27,9 +23,17 @@ export const verifyToken = (
   }
 
   try {
-    const decoded = jwt.verify(token, SECRET_KEY);
-    req.user = decoded;
-    next();
+    const decoded = jwt.verify(token, SECRET_KEY) as JwtPayload;
+
+    if (typeof decoded === "object" && decoded.userId && decoded.role) {
+      req.user = {
+        userId: decoded.userId,
+        role: decoded.role,
+      };
+      next();
+    } else {
+      throw new Error("Invalid token payload");
+    }
   } catch (error) {
     res.status(401).json({ message: "Token is not valid" });
   }

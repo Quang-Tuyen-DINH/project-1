@@ -7,6 +7,7 @@ import {
   updateTodo,
 } from "../controller/todo.controller";
 import { verifyToken } from "../utils/auth";
+import { validateRequest } from "../middleware/validation";
 
 const router = Router();
 
@@ -29,15 +30,8 @@ router.post(
     body("text").isString().notEmpty().withMessage("Text is required"),
     body("completed").isBoolean().withMessage("Completed must be a boolean"),
   ],
-  (req: any, res: any) => {
-    const errors = validationResult(req);
-
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-
-    createTodo(req, res);
-  }
+  validateRequest,
+  createTodo
 );
 
 // PUT /todos/:id - Update an existing todo (user can update only their own todos)
@@ -48,15 +42,8 @@ router.put(
     body("text").isString().notEmpty().withMessage("Text is required"),
     body("completed").isBoolean().withMessage("Completed must be a boolean"),
   ],
-  (req: any, res: any) => {
-    const errors = validationResult(req);
-
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-
-    updateTodo(req, res);
-  }
+  validateRequest,
+  updateTodo
 );
 
 // DELETE /todos/:id - Delete a todo (admin can delete any, user can delete only their own)
